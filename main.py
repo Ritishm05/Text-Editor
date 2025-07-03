@@ -8,6 +8,8 @@ class Main(QMainWindow):   #the basic ui window  ---- Inheritance concept
         loadUi("main.ui",self)
 
         self.current_path= None
+        self.current_fontSize=8
+        self.setWindowTitle("Untitled")
 
         self.actionNew.triggered.connect(self.newFile)
         self.actionSave.triggered.connect(self.saveFile)
@@ -20,8 +22,8 @@ class Main(QMainWindow):   #the basic ui window  ---- Inheritance concept
         self.actionpaste.triggered.connect(self.paste)
         self.actionSet_Dark_mod.triggered.connect(self.setDarkMode)
         self.actionSet_Light_Mode.triggered.connect(self.setLightMode)
-        # self.actionIncrease_Font_Size.triggered.connect(self.incFontSize)
-        # self.actionDecrease_Font_Size.triggered.connect(self.decFontSize)
+        self.actionIncrease_Font.triggered.connect(self.incFontSize)
+        self.actionDecrease_Font.triggered.connect(self.decFontSize)
 
     def newFile(self):
         print("New file clicked")
@@ -30,7 +32,7 @@ class Main(QMainWindow):   #the basic ui window  ---- Inheritance concept
         self.current_path=None
 
     def saveFile(self):
-        print("File saved")
+        # print("File saved")
         if self.current_path is not None:
             # save changes without opening dialog
             filetext=self.edit.toPlainText()   #basically stores the text of the file
@@ -38,10 +40,16 @@ class Main(QMainWindow):   #the basic ui window  ---- Inheritance concept
             with open(self.current_path,'w') as f:
                 f.write(filetext)
         else:
-            self.saveFileAs
+            self.saveFileAs()
 
     def saveFileAs(self):
         print("File saved as")
+        pathname=QFileDialog.getSaveFileName(self,'Save file','D:\Text-Editor','Text files(*.txt)')
+        filetext=self.edit.toPlainText()
+        with open(pathname[0],'w') as f:
+            f.write(filetext)
+        self.setWindowTitle(pathname[0])
+        self.current_path=pathname[0]
 
 
     def OpenFile(self):
@@ -72,14 +80,31 @@ class Main(QMainWindow):   #the basic ui window  ---- Inheritance concept
         self.edit.paste()
     def setDarkMode(self):
         print("Dark")
+        self.setStyleSheet('''QWidget{
+            background-color:rgb(33,33,33);
+            color:#FFFFFF
+            }
+            QTextEdit{
+            background-color: rgb(46,46,46);
+            }
+            QMenuBar::item:selected{
+            color:#000000
+            }  ''')
 
 
     def setLightMode(self):
         print("Light")
+        self.setStyleSheet("")
 
+    def incFontSize(self):
+        print("Font increased")
+        self.current_fontSize+=1
+        self.edit.setFontPointSize(self.current_fontSize)
 
-    def changeFontSize(self):
-        print("Font changed")
+    def decFontSize(self):
+        print("Font decreased")
+        self.current_fontSize-=1
+        self.edit.setFontPointSize(self.current_fontSize)
 
 
 
